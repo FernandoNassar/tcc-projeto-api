@@ -22,7 +22,7 @@ public class ReceitaService {
         return receitaRepository.findAll();
     }
 
-    public void DeleteById(Long id) {
+    public void deleteById(Long id) {
         receitaRepository.deleteById(id);
     }
 
@@ -32,13 +32,14 @@ public class ReceitaService {
         return atualizarCampos(receita, receitaAtualizada);
     }
 
+    public Receita save(Receita receita) {
+        return receitaRepository.save(receita);
+    }
+
     private Receita atualizarCampos(Receita receita, Receita receitaAtualizada) {
         receita.setValor(receitaAtualizada.getValor());
         receita.setData(receitaAtualizada.getData());
         receita.setDescricao(receitaAtualizada.getDescricao());
         return receita;
     }
-
-
-
 }

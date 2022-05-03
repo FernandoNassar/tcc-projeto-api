@@ -2,9 +2,11 @@ package com.example.api.controle.de.gastos.api.services;
 
 import com.example.api.controle.de.gastos.entities.Despesa;
 import com.example.api.controle.de.gastos.repositories.DespesaRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class DespesaService {
 
     private final DespesaRepository despesaRepository;
@@ -21,14 +23,18 @@ public class DespesaService {
         return despesaRepository.findAll();
     }
 
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         despesaRepository.deleteById(id);
     }
 
-    private Despesa update(Long id, Despesa despesaAtualizada) {
+    public Despesa update(Long id, Despesa despesaAtualizada) {
         if(despesaRepository.findById(id).isEmpty()) return null;
         var despesa = despesaRepository.findById(id).get();
         return atualizarDespesa(despesa, despesaAtualizada);
+    }
+
+    public Despesa save(Despesa despesa) {
+        return despesaRepository.save(despesa);
     }
 
     private Despesa atualizarDespesa(Despesa despesa, Despesa despesaAtualizada) {
@@ -38,5 +44,4 @@ public class DespesaService {
         despesa.setValor(despesaAtualizada.getValor());
         return despesa;
     }
-
 }
