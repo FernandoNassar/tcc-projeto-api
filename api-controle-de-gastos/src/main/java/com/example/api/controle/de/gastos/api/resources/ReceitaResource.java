@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -48,7 +49,7 @@ public class ReceitaResource {
 
 
     @PostMapping
-    public ResponseEntity<ReceitaResp> criarReceita(@RequestBody ReceitaReq requestBody, HttpServletRequest req) throws URISyntaxException {
+    public ResponseEntity<ReceitaResp> criarReceita(@RequestBody @Valid ReceitaReq requestBody, HttpServletRequest req) throws URISyntaxException {
         var receita = modelMapper.map(requestBody, Receita.class);
         receita = receitaService.save(receita);
         var responseBody = modelMapper.map(receita, ReceitaResp.class);
@@ -59,7 +60,7 @@ public class ReceitaResource {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<ReceitaResp> atualizarReceita(@PathVariable("id") Long id, @RequestBody ReceitaReq requestBody) {
+    public ResponseEntity<ReceitaResp> atualizarReceita(@PathVariable("id") Long id, @RequestBody @Valid ReceitaReq requestBody) {
         var receita = modelMapper.map(requestBody, Receita.class);
         receita = receitaService.update(id, receita);
         var responseBody = modelMapper.map(receita, ReceitaResp.class);

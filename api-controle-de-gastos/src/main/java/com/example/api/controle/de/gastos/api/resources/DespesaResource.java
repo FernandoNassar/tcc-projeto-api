@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,7 +53,7 @@ public class DespesaResource {
 
 
     @PostMapping
-    public ResponseEntity<DespesaResp> criarDespesa(@RequestBody DespesaReq requestBody, HttpServletRequest req) throws URISyntaxException {
+    public ResponseEntity<DespesaResp> criarDespesa(@RequestBody @Valid DespesaReq requestBody, HttpServletRequest req) throws URISyntaxException {
         var despesa = modelMapper.map(requestBody, Despesa.class);
         despesa = despesaService.save(despesa);
         var location = new URI(req.getRequestURL().toString());
@@ -64,7 +65,7 @@ public class DespesaResource {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<DespesaResp> atualizarDespesa(@PathVariable("id") Long id, @RequestBody DespesaReq requestBody) {
+    public ResponseEntity<DespesaResp> atualizarDespesa(@PathVariable("id") Long id, @RequestBody @Valid DespesaReq requestBody) {
         var despesa = modelMapper.map(requestBody, Despesa.class);
         despesa = despesaService.update(id, despesa);
         var responseBody = modelMapper.map(despesa, DespesaResp.class);
