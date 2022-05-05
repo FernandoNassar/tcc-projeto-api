@@ -1,5 +1,6 @@
 package com.example.api.controle.de.gastos.api.services;
 
+import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
 import com.example.api.controle.de.gastos.entities.Despesa;
 import com.example.api.controle.de.gastos.repositories.DespesaRepository;
 import org.springframework.stereotype.Service;
@@ -15,27 +16,37 @@ public class DespesaService {
         this.despesaRepository = despesaRepository;
     }
 
+
     public Despesa findById(Long id) {
-        return despesaRepository.findById(id).orElse(null);
+        return despesaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Despesa (id: " + id + ") not found"));
     }
+
 
     public List<Despesa> findAll() {
         return despesaRepository.findAll();
     }
 
+
     public void deleteById(Long id) {
-        despesaRepository.deleteById(id);
+        try {
+            despesaRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Despesa (id: " + id + ") not found");
+        }
     }
 
+
     public Despesa update(Long id, Despesa despesaAtualizada) {
-        if(despesaRepository.findById(id).isEmpty()) return null;
-        var despesa = despesaRepository.findById(id).get();
+        var despesa = findById(id);
         return atualizarDespesa(despesa, despesaAtualizada);
     }
+
 
     public Despesa save(Despesa despesa) {
         return despesaRepository.save(despesa);
     }
+
 
     private Despesa atualizarDespesa(Despesa despesa, Despesa despesaAtualizada) {
         despesa.setCategoria(despesaAtualizada.getCategoria());

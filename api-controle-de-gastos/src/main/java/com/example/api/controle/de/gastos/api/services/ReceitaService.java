@@ -1,5 +1,6 @@
 package com.example.api.controle.de.gastos.api.services;
 
+import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
 import com.example.api.controle.de.gastos.entities.Receita;
 import com.example.api.controle.de.gastos.repositories.ReceitaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,28 +14,37 @@ public class ReceitaService {
     @Autowired
     private ReceitaRepository receitaRepository;
 
+
     public Receita findById(Long id) {
         var opReceita = receitaRepository.findById(id);
-        return opReceita.orElse(null);
+        return opReceita.orElseThrow(() -> new ResourceNotFoundException("Receita (id: " + id + ") not found"));
     }
+
 
     public List<Receita> findAll() {
         return receitaRepository.findAll();
     }
 
+
     public void deleteById(Long id) {
-        receitaRepository.deleteById(id);
+        try {
+            receitaRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Receita (id: " + id + ") not found");
+        }
     }
 
+
     public Receita update(Long id, Receita receitaAtualizada) {
-        if (receitaRepository.findById(id).isEmpty()) return null;
-        var receita = receitaRepository.findById(id).get();
+        var receita = findById(id);
         return atualizarCampos(receita, receitaAtualizada);
     }
+
 
     public Receita save(Receita receita) {
         return receitaRepository.save(receita);
     }
+
 
     private Receita atualizarCampos(Receita receita, Receita receitaAtualizada) {
         receita.setValor(receitaAtualizada.getValor());

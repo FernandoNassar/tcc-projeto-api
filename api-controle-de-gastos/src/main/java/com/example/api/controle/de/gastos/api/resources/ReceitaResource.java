@@ -6,18 +6,14 @@ import com.example.api.controle.de.gastos.api.services.ReceitaService;
 import com.example.api.controle.de.gastos.entities.Receita;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -31,12 +27,14 @@ public class ReceitaResource {
     private ModelMapper modelMapper;
 
 
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<ReceitaResp>> todasAsReceitas() {
         var receitas = receitaService.findAll();
         var responseBody = receitas.stream().map(r -> modelMapper.map(r, ReceitaResp.class)).toList();
         return ResponseEntity.ok(responseBody);
     }
+
 
 
     @GetMapping(path = "/{id}")
@@ -46,6 +44,7 @@ public class ReceitaResource {
         var responseBody = modelMapper.map(receita, ReceitaResp.class);
         return ResponseEntity.ok(responseBody);
     }
+
 
 
     @PostMapping
@@ -58,6 +57,7 @@ public class ReceitaResource {
     }
 
 
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<ReceitaResp> atualizarReceita(@PathVariable("id") Long id, @RequestBody @Valid ReceitaReq requestBody) {
@@ -66,6 +66,7 @@ public class ReceitaResource {
         var responseBody = modelMapper.map(receita, ReceitaResp.class);
         return ResponseEntity.ok().body(responseBody);
     }
+
 
 
     @DeleteMapping("/{id}")

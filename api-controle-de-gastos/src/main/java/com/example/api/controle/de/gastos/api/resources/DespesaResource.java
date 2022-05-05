@@ -3,22 +3,17 @@ package com.example.api.controle.de.gastos.api.resources;
 import com.example.api.controle.de.gastos.api.dto.despesa.DespesaReq;
 import com.example.api.controle.de.gastos.api.dto.despesa.DespesaResp;
 import com.example.api.controle.de.gastos.api.services.DespesaService;
-import com.example.api.controle.de.gastos.entities.Categoria;
 import com.example.api.controle.de.gastos.entities.Despesa;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController

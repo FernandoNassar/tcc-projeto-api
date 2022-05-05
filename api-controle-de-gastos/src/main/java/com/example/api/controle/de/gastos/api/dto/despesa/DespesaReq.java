@@ -13,12 +13,16 @@ public class DespesaReq {
 
     @NotNull @NotEmpty
     private String descricao;
+
     @NotNull @DecimalMin(value = "0.0")
     private BigDecimal valor;
+
     @NotNull
     private LocalDate data;
+
     @NotNull
     private Categoria categoria;
+
 
     public String getDescricao() {
         return descricao;

@@ -11,10 +11,13 @@ public class ReceitaReq {
 
     @NotNull @DecimalMin("0.0")
     private BigDecimal valor;
+
     @NotNull
     private LocalDate data;
+
     @NotNull @NotEmpty
     private String descricao;
+
 
     public BigDecimal getValor() {
         return valor;
