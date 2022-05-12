@@ -38,7 +38,7 @@ public class DespesaResource {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<DespesaResp> receitaPorId(@PathVariable("id") Long id) {
+    public ResponseEntity<DespesaResp> despesaPorId(@PathVariable("id") Long id) {
         var despesa = despesaService.findById(id);
         if (despesa == null) return ResponseEntity.notFound().build();
         var responseBody = modelMapper.map(despesa, DespesaResp.class);
