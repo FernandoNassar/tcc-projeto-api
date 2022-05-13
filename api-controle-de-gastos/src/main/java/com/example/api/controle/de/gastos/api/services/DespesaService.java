@@ -19,7 +19,7 @@ public class DespesaService {
 
     public Despesa findById(Long id) {
         return despesaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Despesa (id: " + id + ") not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(getErrorMessage(id)));
     }
 
 
@@ -32,7 +32,7 @@ public class DespesaService {
         try {
             despesaRepository.deleteById(id);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Despesa (id: " + id + ") not found");
+            throw new ResourceNotFoundException(getErrorMessage(id));
         }
     }
 
@@ -54,5 +54,9 @@ public class DespesaService {
         despesa.setData(despesaAtualizada.getData());
         despesa.setValor(despesaAtualizada.getValor());
         return despesa;
+    }
+
+    private String getErrorMessage(Long id) {
+        return "Despesa (id: " + id + ") not found";
     }
 }

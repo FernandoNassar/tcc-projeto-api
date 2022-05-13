@@ -17,7 +17,7 @@ public class ReceitaService {
 
     public Receita findById(Long id) {
         var opReceita = receitaRepository.findById(id);
-        return opReceita.orElseThrow(() -> new ResourceNotFoundException("Receita (id: " + id + ") not found"));
+        return opReceita.orElseThrow(() -> new ResourceNotFoundException(getErrorMessage(id)));
     }
 
 
@@ -30,7 +30,7 @@ public class ReceitaService {
         try {
             receitaRepository.deleteById(id);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Receita (id: " + id + ") not found");
+            throw new ResourceNotFoundException(getErrorMessage(id));
         }
     }
 
@@ -51,5 +51,9 @@ public class ReceitaService {
         receita.setData(receitaAtualizada.getData());
         receita.setDescricao(receitaAtualizada.getDescricao());
         return receita;
+    }
+
+    private String getErrorMessage(Long id) {
+        return "Receita (id: " + id + ") not found";
     }
 }
