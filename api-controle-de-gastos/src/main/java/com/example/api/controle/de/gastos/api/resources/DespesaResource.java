@@ -29,7 +29,7 @@ public class DespesaResource {
 
 
     @GetMapping
-    public ResponseEntity<List<DespesaResp>> todasAsReceitas() {
+    public ResponseEntity<List<DespesaResp>> todasAsDespesas() {
         var despesas = despesaService.findAll();
         var responseBody = despesas.stream().map(d -> modelMapper.map(d, DespesaResp.class)).toList();
         return ResponseEntity.ok(responseBody);
