@@ -1,9 +1,11 @@
 package com.example.api.controle.de.gastos.api.dto.receita;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class ReceitaResp {
+public class ReceitaResp extends RepresentationModel<ReceitaResp> {
 
     private Long id;
     private BigDecimal valor;
