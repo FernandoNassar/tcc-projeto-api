@@ -17,7 +17,7 @@ public class ReceitaAssembler implements RepresentationModelAssembler<ReceitaRes
         return EntityModel.of(
                 entity,
                 linkTo(methodOn(ReceitaResource.class).receitaPorId(entity.getId())).withSelfRel(),
-                linkTo(methodOn(ReceitaResource.class).todasAsReceitas()).withRel("receitas")
+                linkTo(methodOn(ReceitaResource.class).todasAsReceitas(null)).withRel("receitas")
         );
     }
 
@@ -27,7 +27,7 @@ public class ReceitaAssembler implements RepresentationModelAssembler<ReceitaRes
         CollectionModel<EntityModel<ReceitaResp>> receitas =
                 RepresentationModelAssembler.super.toCollectionModel(entities);
 
-        receitas.add(linkTo(methodOn(ReceitaResource.class).todasAsReceitas()).withSelfRel());
+        receitas.add(linkTo(methodOn(ReceitaResource.class).todasAsReceitas(null)).withSelfRel());
         return receitas;
     }
 }

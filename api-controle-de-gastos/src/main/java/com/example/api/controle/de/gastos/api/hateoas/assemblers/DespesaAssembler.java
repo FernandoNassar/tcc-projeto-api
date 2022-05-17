@@ -17,14 +17,14 @@ public class DespesaAssembler implements RepresentationModelAssembler<DespesaRes
         return EntityModel.of(
                 entity,
                 linkTo(methodOn(DespesaResource.class).despesaPorId(entity.getId())).withSelfRel(),
-                linkTo(methodOn(DespesaResource.class).todasAsDespesas()).withRel("despesas")
+                linkTo(methodOn(DespesaResource.class).todasAsDespesas(null)).withRel("despesas")
         );
     }
 
     @Override
     public CollectionModel<EntityModel<DespesaResp>> toCollectionModel(Iterable<? extends DespesaResp> entities) {
         CollectionModel<EntityModel<DespesaResp>> despesas = RepresentationModelAssembler.super.toCollectionModel(entities);
-        despesas.add(linkTo(methodOn(DespesaResource.class).todasAsDespesas()).withSelfRel());
+        despesas.add(linkTo(methodOn(DespesaResource.class).todasAsDespesas(null)).withSelfRel());
         return despesas;
     }
 }

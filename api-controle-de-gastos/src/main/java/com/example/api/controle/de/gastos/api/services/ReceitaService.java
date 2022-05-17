@@ -4,6 +4,8 @@ import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundExcepti
 import com.example.api.controle.de.gastos.entities.Receita;
 import com.example.api.controle.de.gastos.repositories.ReceitaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +23,8 @@ public class ReceitaService {
     }
 
 
-    public List<Receita> findAll() {
-        return receitaRepository.findAll();
+    public Page<Receita> findAll(Pageable pageable) {
+        return receitaRepository.findAll(pageable);
     }
 
 

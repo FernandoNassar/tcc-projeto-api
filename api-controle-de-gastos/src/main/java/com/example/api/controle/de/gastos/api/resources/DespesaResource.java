@@ -7,8 +7,14 @@ import com.example.api.controle.de.gastos.api.services.DespesaService;
 import com.example.api.controle.de.gastos.entities.Despesa;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +38,18 @@ public class DespesaResource {
     @Autowired
     private DespesaAssembler despesaAssembler;
 
+    @Autowired
+    private PagedResourcesAssembler<DespesaResp> despesaResourcesAssembler;
+
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
-    public CollectionModel<EntityModel<DespesaResp>> todasAsDespesas() {
-        var despesas = despesaService.findAll();
-        var responseBody = despesas.stream().map(d -> modelMapper.map(d, DespesaResp.class)).toList();
-        return despesaAssembler.toCollectionModel(responseBody);
+    public PagedModel<EntityModel<DespesaResp>> todasAsDespesas(
+            @PageableDefault(sort="id", size=10) Pageable pageable) {
+
+        var despesas = despesaService.findAll(pageable);
+        var responseBody = despesas.map(d -> modelMapper.map(d, DespesaResp.class));
+        return despesaResourcesAssembler.toModel(responseBody, despesaAssembler);
     }
 
 

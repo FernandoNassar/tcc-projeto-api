@@ -3,6 +3,8 @@ package com.example.api.controle.de.gastos.api.services;
 import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
 import com.example.api.controle.de.gastos.entities.Despesa;
 import com.example.api.controle.de.gastos.repositories.DespesaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +25,8 @@ public class DespesaService {
     }
 
 
-    public List<Despesa> findAll() {
-        return despesaRepository.findAll();
+    public Page<Despesa> findAll(Pageable pageable) {
+        return despesaRepository.findAll(pageable);
     }
 
 

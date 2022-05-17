@@ -7,8 +7,13 @@ import com.example.api.controle.de.gastos.api.services.ReceitaService;
 import com.example.api.controle.de.gastos.entities.Receita;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,14 +37,19 @@ public class ReceitaResource {
     @Autowired
     private ReceitaAssembler receitaAssembler;
 
+    @Autowired
+    private PagedResourcesAssembler<ReceitaResp> receitaResourcesAssembler;
+
 
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(code = HttpStatus.OK)
-    public CollectionModel<EntityModel<ReceitaResp>> todasAsReceitas() {
-        var receitas = receitaService.findAll();
-        var responseBody = receitas.stream().map(r -> modelMapper.map(r, ReceitaResp.class)).toList();
-        return receitaAssembler.toCollectionModel(responseBody);
+    public PagedModel<EntityModel<ReceitaResp>> todasAsReceitas(
+            @PageableDefault(sort="id", size=10, direction = Sort.Direction.ASC) Pageable pageable) {
+
+        var receitas = receitaService.findAll(pageable);
+        var responseBody = receitas.map(r -> modelMapper.map(r, ReceitaResp.class));
+        return receitaResourcesAssembler.toModel(responseBody, receitaAssembler);
     }
 
 
