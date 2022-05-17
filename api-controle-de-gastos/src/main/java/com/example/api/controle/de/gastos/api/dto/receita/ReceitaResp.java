@@ -5,7 +5,7 @@ import org.springframework.hateoas.RepresentationModel;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class ReceitaResp extends RepresentationModel<ReceitaResp> {
+public class ReceitaResp {
 
     private Long id;
     private BigDecimal valor;
