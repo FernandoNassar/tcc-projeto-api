@@ -17,6 +17,7 @@ public class ReceitaAssembler implements RepresentationModelAssembler<ReceitaRes
         return EntityModel.of(
                 entity,
                 linkTo(methodOn(ReceitaResource.class).receitaPorId(entity.getId())).withSelfRel(),
+                linkTo(methodOn(ReceitaResource.class).removerReceita(entity.getId())).withRel("remover"),
                 linkTo(methodOn(ReceitaResource.class).todasAsReceitas(null)).withRel("receitas")
         );
     }

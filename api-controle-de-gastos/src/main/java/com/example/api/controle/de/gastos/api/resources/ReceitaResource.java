@@ -8,7 +8,7 @@ import com.example.api.controle.de.gastos.entities.Receita;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import static org.springframework.data.domain.Sort.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -45,7 +45,7 @@ public class ReceitaResource {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(code = HttpStatus.OK)
     public PagedModel<EntityModel<ReceitaResp>> todasAsReceitas(
-            @PageableDefault(sort="id", size=10, direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(sort="id", size=10, direction = Direction.ASC) Pageable pageable) {
 
         var receitas = receitaService.findAll(pageable);
         var responseBody = receitas.map(r -> modelMapper.map(r, ReceitaResp.class));
@@ -55,10 +55,11 @@ public class ReceitaResource {
 
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<EntityModel<ReceitaResp>> receitaPorId(@PathVariable("id") Long id) {
+    @ResponseStatus(code = HttpStatus.OK)
+    public EntityModel<ReceitaResp> receitaPorId(@PathVariable("id") Long id) {
         var receita = receitaService.findById(id);
         var responseBody = modelMapper.map(receita, ReceitaResp.class);
-        return ResponseEntity.ok(receitaAssembler.toModel(responseBody));
+        return receitaAssembler.toModel(responseBody);
     }
 
 

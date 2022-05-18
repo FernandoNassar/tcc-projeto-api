@@ -9,7 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import static org.springframework.data.domain.Sort.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -45,7 +45,7 @@ public class DespesaResource {
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
     public PagedModel<EntityModel<DespesaResp>> todasAsDespesas(
-            @PageableDefault(sort="id", size=10) Pageable pageable) {
+            @PageableDefault(sort="id", size=10, direction = Direction.ASC) Pageable pageable) {
 
         var despesas = despesaService.findAll(pageable);
         var responseBody = despesas.map(d -> modelMapper.map(d, DespesaResp.class));
@@ -54,10 +54,10 @@ public class DespesaResource {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<DespesaResp>> despesaPorId(@PathVariable("id") Long id) {
+    public EntityModel<DespesaResp> despesaPorId(@PathVariable("id") Long id) {
         var despesa = despesaService.findById(id);
         var responseBody = modelMapper.map(despesa, DespesaResp.class);
-        return ResponseEntity.ok(despesaAssembler.toModel(responseBody));
+        return despesaAssembler.toModel(responseBody);
     }
 
 
