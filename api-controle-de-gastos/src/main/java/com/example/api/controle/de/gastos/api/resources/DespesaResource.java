@@ -7,23 +7,19 @@ import com.example.api.controle.de.gastos.api.services.DespesaService;
 import com.example.api.controle.de.gastos.entities.Despesa;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import static org.springframework.data.domain.Sort.*;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import static org.springframework.data.domain.Sort.Direction;
 
 @RestController
 @RequestMapping("/api/despesas")
@@ -38,18 +34,15 @@ public class DespesaResource {
     @Autowired
     private DespesaAssembler despesaAssembler;
 
-    @Autowired
-    private PagedResourcesAssembler<DespesaResp> despesaResourcesAssembler;
-
 
     @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
     public PagedModel<EntityModel<DespesaResp>> todasAsDespesas(
-            @PageableDefault(sort="id", size=10, direction = Direction.ASC) Pageable pageable) {
+            @PageableDefault(sort = "id", size = 100, direction = Direction.ASC) Pageable pageable) {
 
         var despesas = despesaService.findAll(pageable);
         var responseBody = despesas.map(d -> modelMapper.map(d, DespesaResp.class));
-        return despesaResourcesAssembler.toModel(responseBody, despesaAssembler);
+        return despesaAssembler.toPagedModel(responseBody);
     }
 
 
@@ -92,5 +85,28 @@ public class DespesaResource {
         return ResponseEntity.noContent().build();
     }
 
+
+    @GetMapping("/search/descricao")
+    @ResponseStatus(code = HttpStatus.OK)
+    public PagedModel<EntityModel<DespesaResp>> buscarDespesas(
+            @PageableDefault(sort = "descricao", direction = Direction.ASC) Pageable pageable,
+            @RequestParam(name = "descricao", required = true) String descricao) {
+
+        var despesas = despesaService.findByDescricaoContaining(descricao, pageable);
+        var responseBody = despesas.map(d -> modelMapper.map(d, DespesaResp.class));
+        return despesaAssembler.toPagedModel(responseBody);
+    }
+
+
+    @GetMapping(path = "/{ano}/{mes}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public PagedModel<EntityModel<DespesaResp>> despesasPorMesEAno(
+            @PathVariable(name = "ano") Integer ano, @PathVariable(name = "mes") Integer mes,
+            @PageableDefault(sort = "id", size = 10, direction = Direction.ASC) Pageable pageable) {
+
+        var despesas = despesaService.findByYearAndMonth(ano, mes, pageable);
+        var responseBody = despesas.map(d -> modelMapper.map(d, DespesaResp.class));
+        return despesaAssembler.toPagedModel(responseBody);
+    }
 
 }

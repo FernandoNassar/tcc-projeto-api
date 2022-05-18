@@ -42,6 +42,17 @@ public class ReceitaService {
         return atualizarCampos(receita, receitaAtualizada);
     }
 
+    public Page<Receita> findByDescricaoContaining(String descricao, Pageable pageable) {
+        return receitaRepository.findByDescricaoContaining(descricao, pageable);
+    }
+
+    public Page<Receita> findByYearAndMonth(Integer year, Integer month, Pageable pageable) {
+        return receitaRepository.findByYearAndMonth(year, month, pageable);
+    }
+
+    public Page<Receita> findByYear(Integer year, Pageable pageable) {
+        return receitaRepository.findByYear(year, pageable);
+    }
 
     public Receita save(Receita receita) {
         return receitaRepository.save(receita);

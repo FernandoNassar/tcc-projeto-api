@@ -8,21 +8,19 @@ import com.example.api.controle.de.gastos.entities.Receita;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import static org.springframework.data.domain.Sort.*;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static org.springframework.data.domain.Sort.Direction;
 
 @RestController
 @RequestMapping("/api/receitas")
@@ -37,21 +35,16 @@ public class ReceitaResource {
     @Autowired
     private ReceitaAssembler receitaAssembler;
 
-    @Autowired
-    private PagedResourcesAssembler<ReceitaResp> receitaResourcesAssembler;
 
-
-
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     @ResponseStatus(code = HttpStatus.OK)
     public PagedModel<EntityModel<ReceitaResp>> todasAsReceitas(
-            @PageableDefault(sort="id", size=10, direction = Direction.ASC) Pageable pageable) {
+            @PageableDefault(sort = "id", size = 100, direction = Direction.ASC) Pageable pageable) {
 
         var receitas = receitaService.findAll(pageable);
         var responseBody = receitas.map(r -> modelMapper.map(r, ReceitaResp.class));
-        return receitaResourcesAssembler.toModel(responseBody, receitaAssembler);
+        return receitaAssembler.toPagedModel(responseBody);
     }
-
 
 
     @GetMapping(path = "/{id}")
@@ -61,7 +54,6 @@ public class ReceitaResource {
         var responseBody = modelMapper.map(receita, ReceitaResp.class);
         return receitaAssembler.toModel(responseBody);
     }
-
 
 
     @PostMapping
@@ -76,7 +68,6 @@ public class ReceitaResource {
     }
 
 
-
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     @Transactional
@@ -88,11 +79,34 @@ public class ReceitaResource {
     }
 
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removerReceita(@PathVariable("id") Long id) {
         receitaService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/search/descricao")
+    @ResponseStatus(code = HttpStatus.OK)
+    public PagedModel<EntityModel<ReceitaResp>> buscarReceitas(
+            @PageableDefault(sort = "id", direction = Direction.ASC) Pageable pageable,
+            @RequestParam(name = "descricao", required = true) String descricao) {
+
+        var receitas = receitaService.findByDescricaoContaining(descricao, pageable);
+        var responseBody = receitas.map(r -> modelMapper.map(r, ReceitaResp.class));
+        return receitaAssembler.toPagedModel(responseBody);
+    }
+
+
+    @GetMapping(path = "/{ano}/{mes}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public PagedModel<EntityModel<ReceitaResp>> receitasPorAnoEMes(
+            @PathVariable(name = "ano") Integer ano, @PathVariable(name = "mes") Integer mes,
+            @PageableDefault(sort = "id", direction = Direction.ASC) Pageable pageable) {
+
+        var receitas = receitaService.findByYearAndMonth(ano, mes, pageable);
+        var responseBody = receitas.map(r -> modelMapper.map(r, ReceitaResp.class));
+        return receitaAssembler.toPagedModel(responseBody);
     }
 
 }

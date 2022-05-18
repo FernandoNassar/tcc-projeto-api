@@ -1,6 +1,7 @@
 package com.example.api.controle.de.gastos.api.services;
 
 import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
+import com.example.api.controle.de.gastos.entities.Categoria;
 import com.example.api.controle.de.gastos.entities.Despesa;
 import com.example.api.controle.de.gastos.repositories.DespesaRepository;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,18 @@ public class DespesaService {
         despesa.setData(despesaAtualizada.getData());
         despesa.setValor(despesaAtualizada.getValor());
         return despesa;
+    }
+
+    public Page<Despesa> findByYearAndMonth(Integer year, Integer month, Pageable pageable) {
+        return despesaRepository.findByYearAndMonth(year, month, pageable);
+    }
+
+    public List<Despesa> findByCategoriaYearAndMonth(Categoria categoria, Integer year, Integer month) {
+        return despesaRepository.findByCategoriaYearAndMonth(categoria, year, month);
+    }
+
+    public Page<Despesa> findByDescricaoContaining(String descricao, Pageable pageable) {
+        return despesaRepository.findByDescricaoContaining(descricao, pageable);
     }
 
     private String getErrorMessage(Long id) {
