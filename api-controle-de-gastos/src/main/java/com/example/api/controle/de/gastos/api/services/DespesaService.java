@@ -3,8 +3,11 @@ package com.example.api.controle.de.gastos.api.services;
 import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
 import com.example.api.controle.de.gastos.entities.Categoria;
 import com.example.api.controle.de.gastos.entities.Despesa;
+import com.example.api.controle.de.gastos.entities.Usuario;
 import com.example.api.controle.de.gastos.repositories.DespesaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -13,26 +16,25 @@ import java.util.List;
 @Service
 public class DespesaService {
 
-    private final DespesaRepository despesaRepository;
-
-    public DespesaService(DespesaRepository despesaRepository) {
-        this.despesaRepository = despesaRepository;
-    }
+    @Autowired
+    private DespesaRepository despesaRepository;
 
 
-    public Despesa findById(Long id) {
-        return despesaRepository.findById(id)
+
+    public Despesa findById(Long id, Usuario usuario) {
+        return despesaRepository.findByIdAndUsuario(id, usuario)
                 .orElseThrow(() -> new ResourceNotFoundException(getErrorMessage(id)));
     }
 
 
-    public Page<Despesa> findAll(Pageable pageable) {
-        return despesaRepository.findAll(pageable);
+    public Page<Despesa> findAll(Usuario usuario, Pageable pageable) {
+        return despesaRepository.findByUsuario(usuario, pageable);
     }
 
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Usuario usuario) {
         try {
+            findById(id, usuario);
             despesaRepository.deleteById(id);
         } catch (Exception e) {
             throw new ResourceNotFoundException(getErrorMessage(id));
@@ -40,13 +42,14 @@ public class DespesaService {
     }
 
 
-    public Despesa update(Long id, Despesa despesaAtualizada) {
-        var despesa = findById(id);
+    public Despesa update(Long id, Despesa despesaAtualizada, Usuario usuario) {
+        var despesa = findById(id, usuario);
         return atualizarDespesa(despesa, despesaAtualizada);
     }
 
 
-    public Despesa save(Despesa despesa) {
+    public Despesa save(Despesa despesa, Usuario usuario) {
+        despesa.setUsuario(usuario);
         return despesaRepository.save(despesa);
     }
 
@@ -59,19 +62,27 @@ public class DespesaService {
         return despesa;
     }
 
-    public Page<Despesa> findByYearAndMonth(Integer year, Integer month, Pageable pageable) {
-        return despesaRepository.findByYearAndMonth(year, month, pageable);
+    public List<Despesa> findByYearAndMonth(Integer year, Integer month, Usuario usuario) {
+        return despesaRepository.findByYearAndMonth(year, month, usuario.getId());
     }
 
-    public List<Despesa> findByCategoriaYearAndMonth(Categoria categoria, Integer year, Integer month) {
-        return despesaRepository.findByCategoriaYearAndMonth(categoria, year, month);
+    public List<Despesa> findByCategoriaYearAndMonth(Categoria categoria, Integer year, Integer month, Usuario usuario) {
+        return despesaRepository.findByCategoriaYearAndMonth(categoria, year, month).stream().filter(c -> c.getUsuario() == usuario).toList();
     }
 
-    public Page<Despesa> findByDescricaoContaining(String descricao, Pageable pageable) {
-        return despesaRepository.findByDescricaoContaining(descricao, pageable);
+    public Page<Despesa> findByDescricaoContaining(String descricao, Usuario usuario, Pageable pageable) {
+//        var despesa = despesaRepository.findByDescricaoContainingAndUsuario(descricao, usuario, pageable)
+//                .stream()
+//                .filter(d -> pertenceAoUsuario(d, usuario)).toList();
+//        return new PageImpl<>(despesa, pageable, despesa.size());
+        return despesaRepository.findByDescricaoContainingAndUsuario(descricao, usuario, pageable);
     }
 
     private String getErrorMessage(Long id) {
         return "Despesa (id: " + id + ") not found";
+    }
+
+    private boolean pertenceAoUsuario(Despesa despesa, Usuario usuario) {
+        return despesa.getUsuario() == usuario;
     }
 }

@@ -19,6 +19,9 @@ public class Receita {
     @Column(nullable = false, length = 200)
     private String descricao;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Usuario usuario;
+
 
     public Receita() { }
 
@@ -59,5 +62,13 @@ public class Receita {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

@@ -23,6 +23,9 @@ public class Despesa {
     @Column(nullable = false, length = 30)
     private Categoria categoria;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Usuario usuario;
+
 
     public Despesa() { }
 
@@ -72,5 +75,13 @@ public class Despesa {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }
