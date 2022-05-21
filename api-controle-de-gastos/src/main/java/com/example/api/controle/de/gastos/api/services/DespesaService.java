@@ -7,7 +7,6 @@ import com.example.api.controle.de.gastos.entities.Usuario;
 import com.example.api.controle.de.gastos.repositories.DespesaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -71,18 +70,10 @@ public class DespesaService {
     }
 
     public Page<Despesa> findByDescricaoContaining(String descricao, Usuario usuario, Pageable pageable) {
-//        var despesa = despesaRepository.findByDescricaoContainingAndUsuario(descricao, usuario, pageable)
-//                .stream()
-//                .filter(d -> pertenceAoUsuario(d, usuario)).toList();
-//        return new PageImpl<>(despesa, pageable, despesa.size());
         return despesaRepository.findByDescricaoContainingAndUsuario(descricao, usuario, pageable);
     }
 
     private String getErrorMessage(Long id) {
         return "Despesa (id: " + id + ") not found";
-    }
-
-    private boolean pertenceAoUsuario(Despesa despesa, Usuario usuario) {
-        return despesa.getUsuario() == usuario;
     }
 }

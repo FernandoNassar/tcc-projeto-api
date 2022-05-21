@@ -52,9 +52,6 @@ public class ReceitaService {
         return receitaRepository.findByYearAndMonth(year, month, usuario.getId());
     }
 
-    public Page<Receita> findByYear(Integer year, Pageable pageable) {
-        return receitaRepository.findByYear(year, pageable);
-    }
 
     public Receita save(Receita receita, Usuario usuario) {
         receita.setUsuario(usuario);
