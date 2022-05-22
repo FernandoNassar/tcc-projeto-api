@@ -20,8 +20,11 @@ public class TokenService {
     private UsuarioService usuarioService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Value("${jwt.secret}")
     private String secret;
+
+    public static final long TOKEN_EXPIRATION = 86400000L;
 
 
     public String buildToken(Authentication authentication) {
@@ -29,7 +32,8 @@ public class TokenService {
         return Jwts.builder()
                 .setIssuer("API controle-de-gastos")
                 .setSubject(usuario.getUsername())
-                .setIssuedAt(new Date())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }

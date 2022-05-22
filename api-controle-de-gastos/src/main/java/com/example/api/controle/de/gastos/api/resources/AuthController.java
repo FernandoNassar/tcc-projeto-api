@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -36,7 +37,7 @@ public class AuthController {
     private ModelMapper modelMapper;
 
     @PostMapping(path = "/login")
-    public ResponseEntity<TokenRes> autenticar(@RequestBody LoginReq requestBody) {
+    public ResponseEntity<TokenRes> autenticar(@RequestBody @Valid LoginReq requestBody) {
         try {
             var usuario = usuarioService.findByUsername(requestBody.getUsername());
             var token = tokenService.getToken(authManager, usuario, requestBody.getPassword());
@@ -47,7 +48,8 @@ public class AuthController {
     }
 
     @PostMapping(path = "/cadastrar")
-    public ResponseEntity<CadastroResp> cadastrar (@RequestBody CadastroReq reqBody, HttpServletRequest request) throws URISyntaxException {
+    public ResponseEntity<CadastroResp> cadastrar (@RequestBody @Valid CadastroReq reqBody, HttpServletRequest request)
+            throws URISyntaxException {
 
         var usuario = modelMapper.map(reqBody, Usuario.class);
         usuario = usuarioService.save(usuario);

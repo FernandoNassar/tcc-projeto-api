@@ -3,6 +3,7 @@ package com.example.api.controle.de.gastos.api.exceptions.handlers.common;
 import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
 import com.example.api.controle.de.gastos.api.exceptions.handlers.service.ErrorService;
 import com.example.api.controle.de.gastos.api.exceptions.model.Error;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -65,4 +66,11 @@ public class CommonExceptions {
         return errorService.buildError(status, e.getLocalizedMessage(), req.getRequestURL(), req.getMethod());
     }
 
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error dataIntegrityViolationExceptionHandler(DataIntegrityViolationException e, HttpServletRequest req) {
+        var status = HttpStatus.BAD_REQUEST;
+        return errorService.buildError(status, e.getLocalizedMessage(), req.getRequestURL(), req.getMethod());
+    }
 }

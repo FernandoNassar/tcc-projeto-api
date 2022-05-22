@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  api-controle-gastos:
+    image: 'dev/api-controle-gastos'
+    build:
+      context: .
+    container_name: api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-compose
+      - pgadmin-compose
+    environment:
+      - ACTIVE_PROFILE=prod
+      - FORUM_DATABASE_URL=jdbc:postgresql://postgres-compose:5432/controle-de-gastos
+      - FORUM_DATABASE_USERNAME=postgres
+      - FORUM_DATABASE_PASSWORD=password
+    networks:
+      - postgres-compose-network
+
+  postgres-compose:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./volume/:/var/lib/postgresql/data
+    networks:
+      - postgres-compose-network
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgrescompose@yahoo.com.br"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres-compose
+    networks:
+      - postgres-compose-network
+
+networks:
+  postgres-compose-network:
+    driver: bridge
