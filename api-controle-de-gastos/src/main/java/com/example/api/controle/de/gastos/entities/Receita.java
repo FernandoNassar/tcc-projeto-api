@@ -1,11 +1,12 @@
 package com.example.api.controle.de.gastos.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity @Table(name = "receitas")
-public class Receita {
+public class Receita implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

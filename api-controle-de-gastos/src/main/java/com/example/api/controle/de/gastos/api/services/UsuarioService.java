@@ -3,6 +3,7 @@ package com.example.api.controle.de.gastos.api.services;
 import com.example.api.controle.de.gastos.api.exceptions.ResourceNotFoundException;
 import com.example.api.controle.de.gastos.entities.Usuario;
 import com.example.api.controle.de.gastos.repositories.UsuarioRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class UsuarioService {
         usuario.setPassword(bCryptPasswordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
+
 
     public Usuario findByUsername(String username) {
         return usuarioRepository.findByUsername(username)

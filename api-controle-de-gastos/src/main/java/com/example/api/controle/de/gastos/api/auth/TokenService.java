@@ -21,12 +21,13 @@ public class TokenService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
     @Value("${jwt.secret}")
     private String secret;
 
     public static final long TOKEN_EXPIRATION = 86400000L;
 
-
+    
     public String buildToken(Authentication authentication) {
         var usuario = (Usuario) authentication.getPrincipal();
         return Jwts.builder()

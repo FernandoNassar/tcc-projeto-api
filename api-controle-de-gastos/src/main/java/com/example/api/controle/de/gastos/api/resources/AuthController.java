@@ -53,16 +53,13 @@ public class AuthController {
 
         var usuario = modelMapper.map(reqBody, Usuario.class);
         usuario = usuarioService.save(usuario);
-        var location = new URI(request.getContextPath());
+        var location = new URI(request.getRequestURI());
+        var token = tokenService.getToken(authManager, usuario, reqBody.getPassword());
+        var responseBody = modelMapper.map(usuario, CadastroResp.class);
+        responseBody.setToken(token);
+        return ResponseEntity.created(location).body(responseBody);
 
-        try {
-            var token = tokenService.getToken(authManager, usuario, reqBody.getPassword());
-            var headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
-            return ResponseEntity.created(location).headers(headers).body(modelMapper.map(usuario, CadastroResp.class));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+
 
     }
 }
