@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,8 +56,8 @@ public class ReceitaResource {
             @PathVariable("id") Long id, @RequestHeader("Authorization") String token) {
 
         var receita = receitaService.findById(id, tokenService.getUsuario(token));
-        var responseBody = modelMapper.map(receita, ReceitaResp.class);
-        return receitaAssembler.toModel(responseBody);
+        var receitaResp = modelMapper.map(receita, ReceitaResp.class);
+        return receitaAssembler.toModel(receitaResp);
     }
 
 
@@ -70,14 +69,13 @@ public class ReceitaResource {
         var receita = modelMapper.map(requestBody, Receita.class);
         receita = receitaService.save(receita, tokenService.getUsuario(token));
         var responseBody = modelMapper.map(receita, ReceitaResp.class);
-        var location = new URI(req.getRequestURL().toString());
+        var location = new URI(req.getRequestURL().toString() + "/" + receita.getId());
         return ResponseEntity.created(location).body(receitaAssembler.toModel(responseBody));
     }
 
 
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    @Transactional
     public EntityModel<ReceitaResp> atualizarReceita(
             @PathVariable("id") Long id, @RequestBody @Valid ReceitaReq requestBody,
             @RequestHeader("Authorization") String token) {
@@ -91,6 +89,7 @@ public class ReceitaResource {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removerReceita(@PathVariable("id") Long id, @RequestHeader("Authorization") String token) {
+
         receitaService.deleteById(id, tokenService.getUsuario(token));
         return ResponseEntity.noContent().build();
     }
@@ -98,7 +97,7 @@ public class ReceitaResource {
 
     @GetMapping("/search/descricao/{descricao}")
     @ResponseStatus(code = HttpStatus.OK)
-    public PagedModel<EntityModel<ReceitaResp>> buscarReceitas(
+    public PagedModel<EntityModel<ReceitaResp>> receitasPorDescricao(
             @PageableDefault(sort = "id", size = 100, direction = Direction.ASC) Pageable pageable,
             @PathVariable("descricao") String descricao, @RequestHeader("Authorization") String token) {
 

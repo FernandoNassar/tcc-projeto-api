@@ -2,7 +2,7 @@ version: '3'
 
 services:
   api-controle-gastos:
-    image: 'dev/api-controle-gastos'
+    image: 'dev/projeto-tcc-api-controle-de-gastos'
     build:
       context: .
     container_name: api
@@ -11,11 +11,15 @@ services:
     depends_on:
       - postgres-compose
       - pgadmin-compose
+      - redis-compose
     environment:
       - ACTIVE_PROFILE=prod
       - FORUM_DATABASE_URL=jdbc:postgresql://postgres-compose:5432/controle-de-gastos
       - FORUM_DATABASE_USERNAME=postgres
       - FORUM_DATABASE_PASSWORD=password
+      - CACHE_TYPE=redis
+      - REDIS_HOST=redis-compose
+      - REDIS_PORT=6379
     networks:
       - postgres-compose-network
 
@@ -42,6 +46,16 @@ services:
     networks:
       - postgres-compose-network
 
+  redis-compose:
+    image: "redis"
+    command: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./volumes/redis/redis-data:/data
+      - ./volumes/redis/redis-conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - postgres-compose-network
 networks:
   postgres-compose-network:
     driver: bridge

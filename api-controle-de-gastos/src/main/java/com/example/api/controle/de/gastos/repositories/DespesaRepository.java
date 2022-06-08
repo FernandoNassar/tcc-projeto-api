@@ -22,7 +22,7 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
 
     Optional<Despesa> findByIdAndUsuario(Long id, Usuario usuario);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM despesas WHERE YEAR(data) = ?1 AND MONTH(data) = ?2 AND usuario_id = ?3")
+    @Query(nativeQuery = true, value = "SELECT * FROM despesas WHERE EXTRACT(YEAR FROM data) = ?1 AND EXTRACT(MONTH FROM data) = ?2 AND usuario_id = ?3")
     List<Despesa> findByYearAndMonth(Integer year, Integer month, Integer usuarioId);
 
     @Query(value = "SELECT d FROM Despesa d WHERE d.categoria LIKE :categoria AND MONTH(d.data) = :month AND YEAR(d.data) = :year")

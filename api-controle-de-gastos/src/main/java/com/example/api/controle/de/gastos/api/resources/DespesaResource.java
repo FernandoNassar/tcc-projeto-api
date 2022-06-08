@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -69,7 +68,7 @@ public class DespesaResource {
 
         var despesa = modelMapper.map(requestBody, Despesa.class);
         despesa = despesaService.save(despesa, tokenService.getUsuario(token));
-        var location = new URI(req.getRequestURL().toString());
+        var location = new URI(req.getRequestURL().toString() + "/" + despesa.getId());
         var responseBody = modelMapper.map(despesa, DespesaResp.class);
         return ResponseEntity.created(location).body(despesaAssembler.toModel(responseBody));
     }
@@ -77,7 +76,6 @@ public class DespesaResource {
 
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
-    @Transactional
     public EntityModel<DespesaResp> atualizarDespesa(
             @PathVariable("id") Long id, @RequestBody @Valid DespesaReq requestBody,
             @RequestHeader("Authorization") String token) {
@@ -101,7 +99,7 @@ public class DespesaResource {
 
     @GetMapping("/search/descricao/{descricao}")
     @ResponseStatus(code = HttpStatus.OK)
-    public PagedModel<EntityModel<DespesaResp>> buscarDespesas(
+    public PagedModel<EntityModel<DespesaResp>> despesasPorDescricao(
             @PageableDefault(sort = "descricao", direction = Direction.ASC) Pageable pageable,
             @PathVariable("descricao") String descricao, @RequestHeader("Authorization") String token) {
 
